@@ -31,6 +31,7 @@ SMTP_PORT = config['smtp_port']
 SENDER_EMAIL = config['sender_email']  # 替换为你的邮箱
 SENDER_PASSWORD = config['sender_password']  # 替换为你的应用专用密码
 RECEIVER_EMAIL = config['receiver_email']  # 替换为接收通知的邮箱
+SERVER_NAME = config['server_name']  # 服务器名称
 
 
 def get_gpu_status():
@@ -102,8 +103,9 @@ def main():
                 if len(idel_list) > 0:
                     if current_time - last_notification_time >= notification_interval:
                         subject = "GPU 空闲通知"
+                        body = f"{SERVER_NAME} 服务器上的 GPU 空闲，当前状态如下：\n\n"
                         for i in idel_list:
-                            body = f"GPU {i} 空闲，当前状态：\n{gpu_status[i]}\n\n时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+                            body += f"GPU {i} 空闲，当前状态：\n{gpu_status[i]}\n\n时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
                         send_email(subject, body)
                         last_notification_time = current_time
                         logging.info("检测到 GPU 空闲，已发送通知")
