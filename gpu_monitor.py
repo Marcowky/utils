@@ -104,11 +104,19 @@ def main():
                     if current_time - last_notification_time >= notification_interval:
                         subject = "GPU 空闲通知"
                         body = f"{SERVER_NAME} 服务器上的 GPU 空闲，当前状态如下：\n\n"
+
                         for i in idel_list:
-                            body += f"GPU {i} 空闲，当前状态：\n{gpu_status[i]}\n\n时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+                            body += f"GPU {i} 空闲，当前状态：\n{gpu_status[i]}\n"
+
+                        body += f"\n当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+
                         send_email(subject, body)
+
                         last_notification_time = current_time
+
                         logging.info("检测到 GPU 空闲，已发送通知")
+                else:
+                    last_notification_time = 0
             
             time.sleep(60)  # 每分钟检查一次
             
