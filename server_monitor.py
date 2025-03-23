@@ -18,9 +18,6 @@ def check_ssh_connection(hostname, port, username, password, wait_seconds):
 
 
 if __name__ == "__main__":
-    with open('config.json', 'r') as config_file:
-        config = json.load(config_file)
-
     # to modify
     hostname = "222.200.185.67"
     port = 22
