@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 import subprocess
 import time
-import smtplib
-import os
-import json
 import logging
 
-from email.mime.text import MIMEText
-from email.header import Header
 from datetime import datetime
+from sub_utils.smtp_sender import SMTPSender
 
 
 # 配置日志
@@ -20,18 +16,6 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-
-
-# 邮件配置
-config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-with open(config_path, 'r') as f:
-    config = json.load(f)
-SMTP_SERVER = config['smtp_server']  # 根据你的邮箱服务商修改
-SMTP_PORT = config['smtp_port']
-SENDER_EMAIL = config['sender_email']  # 替换为你的邮箱
-SENDER_PASSWORD = config['sender_password']  # 替换为你的应用专用密码
-RECEIVER_EMAIL = config['receiver_email']  # 替换为接收通知的邮箱
-SERVER_NAME = config['server_name']  # 服务器名称
 
 
 def get_gpu_status():
@@ -48,25 +32,6 @@ def get_gpu_status():
     except Exception as e:
         logging.error(f"获取 GPU 状态时出错: {str(e)}")
         return None
-
-
-def send_email(subject, body):
-    """发送邮件通知"""
-    try:
-        msg = MIMEText(body, 'plain', 'utf-8')
-        msg['Subject'] = Header(subject, 'utf-8')
-        msg['From'] = SENDER_EMAIL
-        msg['To'] = RECEIVER_EMAIL
-
-        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
-            server.connect(SMTP_SERVER, SMTP_PORT)
-            server.login(SENDER_EMAIL, SENDER_PASSWORD)
-            server.send_message(msg)
-            server.quit()
-        
-        logging.info("邮件发送成功")
-    except Exception as e:
-        logging.error(f"发送邮件时出错: {str(e)}")
 
 
 def is_gpu_idle(gpu_status):
@@ -92,6 +57,12 @@ def main():
     last_notification_time = 0
     notification_interval = 3600  # 通知间隔（秒）
 
+    # to modify
+    SERVER_NAME = "222.200.185.9"
+    receiver_email = "1341887814@qq.com"
+
+    smtp_sender = SMTPSender()
+
     while True:
         try:
             current_time = time.time()
@@ -110,7 +81,7 @@ def main():
 
                         body += f"\n当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
-                        send_email(subject, body)
+                        smtp_sender.send_email(subject, body, receiver_email)
 
                         last_notification_time = current_time
 
