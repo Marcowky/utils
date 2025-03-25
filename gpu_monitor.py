@@ -55,10 +55,11 @@ def is_gpu_idle(gpu_status):
 def main():
     logging.info("GPU 监控程序启动")
     last_notification_time = 0
+    last_idel_list = []
     notification_interval = 3600  # 通知间隔（秒）
 
     # to modify
-    SERVER_NAME = "222.200.185.9"
+    SERVER_NAME = "222.200.185.67"
     receiver_email = "1341887814@qq.com"
 
     smtp_sender = SMTPSender()
@@ -72,7 +73,7 @@ def main():
                 idel_list = is_gpu_idle(gpu_status)
 
                 if len(idel_list) > 0:
-                    if current_time - last_notification_time >= notification_interval:
+                    if current_time - last_notification_time >= notification_interval or idel_list != last_idel_list:
                         subject = "GPU 空闲通知"
                         body = f"{SERVER_NAME} 服务器上的 GPU 空闲，当前状态如下：\n\n"
 
@@ -84,6 +85,7 @@ def main():
                         smtp_sender.send_email(subject, body, receiver_email)
 
                         last_notification_time = current_time
+                        last_idel_list = idel_list
 
                         logging.info("检测到 GPU 空闲，已发送通知")
                 else:
