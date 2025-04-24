@@ -1,0 +1,3 @@
+[submodule "HuggingFace-Download-Accelerator"]
+	path = HuggingFace-Download-Accelerator
+	url = https://github.com/LetheSec/HuggingFace-Download-Accelerator.git
