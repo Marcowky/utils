@@ -8,7 +8,7 @@ if [ -z "$1" ]; then
 fi
 
 # 设置基础路径和模型名称
-base_path="$HOME/model/"
+base_path="$HOME/Model/"
 model_name="$1"
 
 # 组合路径
